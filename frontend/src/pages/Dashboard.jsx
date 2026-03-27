@@ -19,7 +19,7 @@ function Dashboard() {
       }
 
       try {
-        const response = await fetch('http://localhost:5000/api/workouts', {
+        const response = await fetch('https://omg-urave-gym.onrender.com/api/workouts', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -48,7 +48,7 @@ function Dashboard() {
     if (!window.confirm('Are you sure you want to delete this workout?')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/workouts/${workoutId}`, {
+      const response = await fetch(`https://omg-urave-gym.onrender.com/api/workouts/${workoutId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
