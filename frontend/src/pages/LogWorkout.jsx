@@ -73,7 +73,7 @@ function LogWorkout() {
       <div className="max-w-3xl mx-auto bg-gray-800 rounded-xl p-8 shadow-2xl border border-gray-700">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-emerald-400">Log New Session</h2>
-          <button onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white">
+          <button onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white transition-colors">
             Cancel
           </button>
         </div>
@@ -103,46 +103,51 @@ function LogWorkout() {
           {/* Dynamic Exercises List */}
           <div className="space-y-6">
             {exercises.map((exercise, exIndex) => (
-              <div key={exIndex} className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+              <div key={exIndex} className="bg-gray-900 p-6 rounded-lg border border-gray-700 shadow-inner">
                 <input 
                   type="text" 
                   placeholder="Exercise Name (e.g., Squat)" 
                   value={exercise.name}
                   onChange={(e) => updateExerciseName(e.target.value, exIndex)}
-                  className="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white mb-4 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-gray-800 border border-gray-600 rounded p-3 text-white mb-4 focus:outline-none focus:border-emerald-500 transition-colors"
                   required
                 />
 
-                {/* Sets for this specific exercise */}
-                <div className="space-y-3">
+                {/* --- MOBILE OPTIMIZED SETS BLOCK --- */}
+                <div className="space-y-4">
                   {exercise.sets.map((set, setIndex) => (
-                    <div key={setIndex} className="flex gap-4 items-center">
-                      <span className="text-gray-500 font-medium w-12">Set {setIndex + 1}</span>
+                    <div key={setIndex} className="flex flex-wrap sm:flex-nowrap gap-3 items-center bg-gray-800/50 p-3 rounded-lg sm:p-0 sm:bg-transparent">
+                      
+                      <span className="text-gray-500 font-medium w-12 shrink-0">Set {setIndex + 1}</span>
+                      
                       <input 
                         type="number" 
                         placeholder="Weight (kg)" 
                         value={set.weight}
                         onChange={(e) => updateSet(exIndex, setIndex, 'weight', Number(e.target.value))}
-                        className="w-24 bg-gray-800 border border-gray-600 rounded p-2 text-white"
+                        className="flex-1 min-w-17.5 bg-gray-800 border border-gray-600 rounded p-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
                         required
                       />
+                      
                       <input 
                         type="number" 
                         placeholder="Reps" 
                         value={set.reps}
                         onChange={(e) => updateSet(exIndex, setIndex, 'reps', Number(e.target.value))}
-                        className="w-24 bg-gray-800 border border-gray-600 rounded p-2 text-white"
+                        className="flex-1 min-w-17.5 bg-gray-800 border border-gray-600 rounded p-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
                         required
                       />
-                      <label className="flex items-center gap-2 text-sm text-amber-400 cursor-pointer">
+                      
+                      <label className="flex items-center gap-2 text-sm text-amber-400 cursor-pointer shrink-0 ml-1">
                         <input 
                           type="checkbox" 
                           checked={set.isPR}
                           onChange={(e) => updateSet(exIndex, setIndex, 'isPR', e.target.checked)}
-                          className="accent-amber-400 w-4 h-4"
+                          className="accent-amber-400 w-4 h-4 rounded"
                         />
                         PR?
                       </label>
+                      
                     </div>
                   ))}
                 </div>
@@ -150,7 +155,7 @@ function LogWorkout() {
                 <button 
                   type="button" 
                   onClick={() => addSet(exIndex)}
-                  className="mt-4 text-sm text-emerald-400 hover:text-emerald-300 font-medium"
+                  className="mt-5 text-sm text-emerald-400 hover:text-emerald-300 font-medium transition-colors flex items-center gap-1"
                 >
                   + Add Set
                 </button>
@@ -171,7 +176,7 @@ function LogWorkout() {
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-lg transition-colors disabled:opacity-50 text-lg"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-lg transition-colors disabled:opacity-50 text-lg shadow-[0_0_15px_rgba(16,185,129,0.3)]"
             >
               {isLoading ? 'Saving...' : 'Save Workout'}
             </button>
