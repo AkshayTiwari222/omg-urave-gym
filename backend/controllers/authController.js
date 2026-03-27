@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 
 // Helper function to generate a JWT token
 const generateToken = (id) => {
@@ -73,4 +74,53 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// @desc    Authenticate with Google
+// @route   POST /api/auth/google
+// @access  Public
+const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+  try {
+    // 1. Verify the token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    
+    // 2. Extract user info from Google's response
+    const { name, email } = ticket.getPayload();
+
+    // 3. Check if this user already exists in our database
+    let user = await User.findOne({ email });
+
+    // 4. If they don't exist, create a new account for them automatically!
+    if (!user) {
+      const crypto = require('crypto');
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      
+      // Hash the random password just to be safe and consistent
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(randomPassword, salt);
+      
+      user = await User.create({
+        name,
+        email,
+        password: hashedPassword, 
+      });
+    }
+
+    // 5. Send back OUR custom JWT token so the rest of the app works perfectly
+    res.status(200).json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+
+  } catch (error) {
+    res.status(401).json({ message: 'Google Authentication Failed' });
+  }
+};
+
+module.exports = { registerUser, loginUser, googleLogin };

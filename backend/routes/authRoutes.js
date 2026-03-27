@@ -5,5 +5,7 @@ const { registerUser, loginUser } = require('../controllers/authController');
 // Map the routes to the controller functions
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+// ... your other routes
+router.post('/google', googleLogin);
 
 module.exports = router;
