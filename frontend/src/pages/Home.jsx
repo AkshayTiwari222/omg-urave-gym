@@ -9,7 +9,7 @@ function Home() {
       
       {/* Navbar */}
       <nav className="p-6 flex justify-between items-center max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 tracking-wider uppercase">
+        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-300 tracking-wider uppercase">
           OMG Urave Gym
         </h1>
         <div className="flex gap-4">
@@ -35,7 +35,7 @@ function Home() {
         </div>
         <h2 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight">
           Track Every Rep. <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-400">
             Smash Every PR.
           </span>
         </h2>
@@ -44,7 +44,7 @@ function Home() {
         </p>
         <button 
           onClick={() => navigate('/register')}
-          className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold py-4 px-10 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transform hover:-translate-y-1 transition-all duration-300 text-lg uppercase tracking-wide"
+          className="bg-linear-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold py-4 px-10 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transform hover:-translate-y-1 transition-all duration-300 text-lg uppercase tracking-wide"
         >
           Start Tracking for Free
         </button>
@@ -86,27 +86,27 @@ function Home() {
       {/* --- NEW: HOW IT WORKS SECTION --- */}
       <section className="py-24">
         <div className="max-w-5xl mx-auto px-6">
-          <h3 className="text-3xl font-bold text-center mb-16 tracking-wide uppercase text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">How It Works</h3>
+          <h3 className="text-3xl font-bold text-center mb-16 tracking-wide uppercase text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-400">How It Works</h3>
           
           <div className="relative border-l border-emerald-500/30 ml-4 md:ml-0 md:border-none space-y-12 md:space-y-0 md:grid md:grid-cols-3 md:gap-10">
             
             {/* Step 1 */}
             <div className="relative pl-8 md:pl-0 md:text-center">
-              <div className="absolute left-[-17px] top-0 md:relative md:left-auto md:mb-6 w-8 h-8 bg-[#050505] border-2 border-emerald-500 rounded-full flex items-center justify-center font-bold text-emerald-400 mx-auto shadow-[0_0_15px_rgba(16,185,129,0.4)]">1</div>
+              <div className="absolute -left-4.25 top-0 md:relative md:left-auto md:mb-6 w-8 h-8 bg-[#050505] border-2 border-emerald-500 rounded-full flex items-center justify-center font-bold text-emerald-400 mx-auto shadow-[0_0_15px_rgba(16,185,129,0.4)]">1</div>
               <h4 className="text-xl font-bold mb-3 text-white">Select Your Split</h4>
               <p className="text-gray-400 leading-relaxed">Create a free account and choose your workout split for the day. Push, Pull, Legs, or Full Body—we support it all.</p>
             </div>
 
             {/* Step 2 */}
             <div className="relative pl-8 md:pl-0 md:text-center">
-              <div className="absolute left-[-17px] top-0 md:relative md:left-auto md:mb-6 w-8 h-8 bg-[#050505] border-2 border-emerald-500 rounded-full flex items-center justify-center font-bold text-emerald-400 mx-auto shadow-[0_0_15px_rgba(16,185,129,0.4)]">2</div>
+              <div className="absolute-left-4.25 top-0 md:relative md:left-auto md:mb-6 w-8 h-8 bg-[#050505] border-2 border-emerald-500 rounded-full flex items-center justify-center font-bold text-emerald-400 mx-auto shadow-[0_0_15px_rgba(16,185,129,0.4)]">2</div>
               <h4 className="text-xl font-bold mb-3 text-white">Log the Weights</h4>
               <p className="text-gray-400 leading-relaxed">Add your exercises and log your sets. Did you hit a new max? Click the PR checkbox to highlight that specific set in gold.</p>
             </div>
 
             {/* Step 3 */}
             <div className="relative pl-8 md:pl-0 md:text-center">
-              <div className="absolute left-[-17px] top-0 md:relative md:left-auto md:mb-6 w-8 h-8 bg-[#050505] border-2 border-emerald-500 rounded-full flex items-center justify-center font-bold text-emerald-400 mx-auto shadow-[0_0_15px_rgba(16,185,129,0.4)]">3</div>
+              <div className="absolute -left-4.25 top-0 md:relative md:left-auto md:mb-6 w-8 h-8 bg-[#050505] border-2 border-emerald-500 rounded-full flex items-center justify-center font-bold text-emerald-400 mx-auto shadow-[0_0_15px_rgba(16,185,129,0.4)]">3</div>
               <h4 className="text-xl font-bold mb-3 text-white">Track Your Gains</h4>
               <p className="text-gray-400 leading-relaxed">Hit save and watch your Dashboard instantly calculate your total workout volume and chart your progress over time.</p>
             </div>
