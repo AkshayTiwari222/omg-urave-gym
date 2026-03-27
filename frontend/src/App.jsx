@@ -1,6 +1,7 @@
 import React from 'react';
 import LogWorkout from './pages/LogWorkout';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Home from './pages/Home';
 
 // Import your pages
 import Login from './pages/Login';
