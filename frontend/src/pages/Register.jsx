@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Mail, Lock, User, ArrowRight, ArrowLeft } from 'lucide-react';
 
 function Register() {
   const [name, setName] = useState('');
@@ -11,7 +13,7 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault(); // Prevents the page from refreshing on submit
+    e.preventDefault();
     setIsLoading(true);
     setError('');
 
@@ -28,10 +30,7 @@ function Register() {
         throw new Error(data.message || 'Something went wrong');
       }
 
-      // Success! Save the VIP pass (token) to the browser's local storage
       localStorage.setItem('token', data.token);
-      
-      // Redirect to the dashboard
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -41,57 +40,97 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-gray-800 rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center text-emerald-400 mb-8">Create Account</h2>
-        
-        {error && <div className="bg-red-500/10 border border-red-500 text-red-500 rounded p-3 mb-6 text-sm text-center">{error}</div>}
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden text-white font-sans">
+      {/* Background glow */}
+      <div className="absolute top-[20%] left-[20%] w-[60%] h-[60%] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <form onSubmit={handleRegister} className="space-y-6">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-sm bg-[#111]/80 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 sm:p-8 shadow-2xl relative z-10"
+      >
+        <button 
+          onClick={() => navigate('/')}
+          className="absolute top-5 left-5 text-gray-500 active:text-white transition-colors p-2 active:bg-white/5 rounded-full"
+        >
+          <ArrowLeft size={20} />
+        </button>
+
+        <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 mt-8 mb-6 hype-font tracking-widest uppercase">
+          Create Account
+        </h2>
+        
+        {error && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl mb-6 text-center text-sm font-medium">
+            {error}
+          </motion.div>
+        )}
+
+        <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Name</label>
-            <input 
-              type="text" 
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-emerald-500 text-white"
-              required 
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-500">
+                <User size={18} />
+              </div>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-black/60 border border-white/5 rounded-xl h-14 pl-12 pr-4 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-medium text-base"
+                placeholder="Full Name"
+                required 
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Email Address</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-emerald-500 text-white"
-              required 
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-500">
+                <Mail size={18} />
+              </div>
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-black/60 border border-white/5 rounded-xl h-14 pl-12 pr-4 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-medium text-base"
+                placeholder="Email Address"
+                required 
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-emerald-500 text-white"
-              required 
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-500">
+                <Lock size={18} />
+              </div>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-black/60 border border-white/5 rounded-xl h-14 pl-12 pr-4 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-medium text-base"
+                placeholder="Password"
+                required 
+              />
+            </div>
           </div>
           
           <button 
             type="submit" 
             disabled={isLoading}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-extrabold h-14 rounded-xl transition-transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest flex items-center justify-center gap-2 mt-4 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
-            {isLoading ? 'Creating Account...' : 'Sign Up'}
+            <span>{isLoading ? 'Wait...' : 'Sign Up'}</span>
+            {!isLoading && <ArrowRight size={18} />}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400 text-sm">
-          Already have an account? <Link to="/login" className="text-emerald-400 hover:underline">Log in</Link>
+        <p className="mt-8 text-center text-gray-400 text-sm font-medium">
+          Already have an account?{' '}
+          <Link to="/login" className="text-emerald-400 font-bold active:text-emerald-300 transition-colors p-2 -m-2">
+            Log in
+          </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

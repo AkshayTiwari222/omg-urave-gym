@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// 1. IMPORT RECHARTS
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LogOut, Trash2, Calendar, Dumbbell, Plus, Trophy, LayoutDashboard, User } from 'lucide-react';
 
 function Dashboard() {
   const [workouts, setWorkouts] = useState([]);
@@ -45,7 +46,7 @@ function Dashboard() {
   }, [navigate]);
 
   const handleDelete = async (workoutId) => {
-    if (!window.confirm('Are you sure you want to delete this workout?')) return;
+    if (!window.confirm('Delete this workout?')) return;
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`https://omg-urave-gym.onrender.com/api/workouts/${workoutId}`, {
@@ -64,8 +65,6 @@ function Dashboard() {
     navigate('/login');
   };
 
-  // 2. THE MATH: Calculate Total Volume for the Graph
-  // We sort the workouts chronologically, then multiply (Weight x Reps) for every single set.
   const chartData = [...workouts]
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .map(workout => {
@@ -76,56 +75,71 @@ function Dashboard() {
         });
       });
       return {
-        // Format date to look clean (e.g., "Mar 24")
         date: new Date(workout.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         volume: totalVolume,
         split: workout.splitType
       };
     });
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
+  };
+
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
-      {/* Navigation Bar */}
-      <nav className="bg-black/50 backdrop-blur-md border-b border-white/10 p-4 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-300 hype-font tracking-wider">
-            OMG Urave Gym
+    <div className="min-h-screen bg-[#050505] text-white font-sans relative overflow-x-hidden pb-24">
+      
+      {/* Dynamic Background Glows for Phone Center */}
+      <div className="fixed top-20 right-[-30%] w-[80%] h-[30%] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Simplified Top App Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 pt-safe">
+        <div className="px-4 py-3 flex justify-center items-center">
+          <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 hype-font tracking-widest uppercase">
+            OMG Urave
           </h1>
-          <button onClick={handleLogout} className="text-gray-400 hover:text-white hover:bg-white/10 px-4 py-2 rounded transition-colors text-sm uppercase tracking-wide font-semibold">
-            Logout
-          </button>
         </div>
       </nav>
 
-      {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto p-6 mt-6">
+      {/* Main Content Area optimized for thumbs */}
+      <main className="px-4 mt-20 relative z-10 w-full max-w-lg mx-auto">
         
-        {/* Header Row */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
-          <h2 className="text-3xl font-bold hype-font">Your Logbook</h2>
-          <button 
-            onClick={() => navigate('/log-workout')}
-            className="w-full sm:w-auto bg-linear-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold py-4 sm:py-3 px-8 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] transform hover:-translate-y-1 transition-all duration-300 hype-font text-lg uppercase tracking-wide"
-          >
-            + Log Session
-          </button>
-        </div>
-
-        {error && <div className="bg-red-500/10 border border-red-500 text-red-500 rounded p-4 mb-6">{error}</div>}
+        {error && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-500/10 border border-red-500/50 text-red-500 rounded-2xl p-4 mb-6 backdrop-blur-sm text-sm">
+            {error}
+          </motion.div>
+        )}
         
         {isLoading ? (
-          <div className="text-center text-emerald-400 mt-12 hype-font animate-pulse text-xl">Loading your gains...</div>
-        ) : workouts.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center text-gray-400 border border-white/10 border-dashed">
-            <p className="text-xl hype-font mb-2">No workouts logged yet.</p>
-            <p>Time to hit the iron!</p>
+          <div className="space-y-4">
+            <div className="animate-pulse bg-white/5 h-64 rounded-3xl border border-white/5" />
+            <div className="animate-pulse bg-white/5 h-40 rounded-3xl border border-white/5" />
+            <div className="animate-pulse bg-white/5 h-40 rounded-3xl border border-white/5" />
           </div>
+        ) : workouts.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            className="mt-12 bg-white/5 backdrop-blur-md rounded-3xl p-10 text-center text-gray-400 border border-white/10 shadow-2xl"
+          >
+            <Dumbbell className="w-16 h-16 mx-auto mb-6 text-emerald-500/50" />
+            <p className="text-2xl hype-font mb-3 text-white">No gains yet.</p>
+            <p className="text-gray-500 text-sm">Tap the + button to log your first session.</p>
+          </motion.div>
         ) : (
-          <>
-            {/* 3. THE GRAPH: Volume Progression */}
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-8 shadow-xl">
-              <h3 className="text-xl font-bold text-gray-400 mb-6 hype-font uppercase tracking-wide">Volume Progression (kg)</h3>
-              <div className="h-64 w-full">
+          <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            
+            {/* Edge-to-Edge Style Graph Card */}
+            <motion.div variants={itemVariants} className="bg-[#111] border border-white/5 rounded-[32px] p-5 mb-8 shadow-2xl relative overflow-hidden">
+              <div className="flex items-center gap-2 mb-6 relative z-10">
+                <LineChart className="text-emerald-400 w-5 h-5" />
+                <h3 className="text-sm font-bold text-gray-300 uppercase tracking-widest">Volume (kg)</h3>
+              </div>
+              <div className="h-56 w-full relative z-10 -ml-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData}>
                     <defs>
@@ -134,76 +148,128 @@ function Dashboard() {
                         <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="date" stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} tickMargin={10} />
-                    <YAxis stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} tickFormatter={(value) => `${value}kg`} width={60} />
+                    <XAxis dataKey="date" stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 10, fontFamily: 'Inter' }} tickMargin={12} axisLine={false} tickLine={false} />
+                    <YAxis stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 10, fontFamily: 'Inter' }} tickFormatter={(value) => `${value}`} width={40} axisLine={false} tickLine={false} />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#111827', border: '1px solid #374151', borderRadius: '0.75rem', color: '#fff' }}
+                      cursor={{ stroke: 'rgba(16,185,129,0.3)', strokeWidth: 2 }}
+                      contentStyle={{ backgroundColor: 'rgba(20,20,20,0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '1rem', color: '#fff', fontSize: '12px', padding: '10px' }}
                       itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                      labelStyle={{ color: '#9ca3af', marginBottom: '4px' }}
+                      labelStyle={{ color: '#9ca3af', marginBottom: '4px', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}
                     />
-                    <Area type="monotone" dataKey="volume" name="Total Volume" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorVolume)" />
+                    <Area type="monotone" dataKey="volume" name="Vol" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorVolume)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Workouts List */}
-            <div className="space-y-6">
-              {workouts.map((workout) => (
-                <div key={workout._id} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors duration-300 shadow-xl">
-                  
-                  {/* Card Header */}
-                  <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-5">
-                    <h3 className="text-2xl font-bold text-emerald-400 hype-font uppercase tracking-wide">
-                      {workout.splitType} Day
-                    </h3>
-                    <div className="flex items-center gap-4">
-                      <span className="text-gray-400 text-sm font-medium">
-                        {new Date(workout.date).toLocaleDateString()}
-                      </span>
-                      <button 
-                        onClick={() => handleDelete(workout._id)}
-                        className="text-red-500/70 hover:text-red-400 hover:bg-red-500/10 p-2 rounded transition-colors text-xs font-bold uppercase tracking-wider"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                  
-                  {/* Exercises Array */}
-                  <div className="space-y-5">
-                    {workout.exercises.map((exercise, index) => (
-                      <div key={index} className="bg-black/30 rounded-xl p-5 border border-white/5">
-                        <h4 className="font-semibold text-lg mb-3 tracking-wide">{exercise.name}</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-300">
-                          {exercise.sets.map((set, setIndex) => (
-                            <div key={setIndex} className={`bg-black/50 rounded-lg p-3 text-center transition-all ${
-                              set.isPR 
-                                ? 'ring-2 ring-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.2)] bg-linear-to-b from-amber-500/10 to-black/50' 
-                                : 'border border-white/5'
-                            }`}>
-                              <span className="block text-xs text-gray-500 mb-1 font-semibold tracking-wider">SET {setIndex + 1}</span>
-                              <span className="font-bold text-lg text-white">{set.weight}kg × {set.reps}</span>
-                              {set.isPR && (
-                                <div className="mt-2 inline-flex items-center gap-1 bg-amber-400/20 text-amber-400 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider shadow-inner">
-                                  <span>⭐ PR</span>
-                                </div>
-                              )}
-                            </div>
-                          ))}
+            {/* Mobile-Optimized Workouts List */}
+            <div className="space-y-4">
+              <AnimatePresence>
+                {workouts.map((workout) => (
+                  <motion.div 
+                    key={workout._id} 
+                    variants={itemVariants}
+                    exit={{ opacity: 0, scale: 0.9, height: 0 }}
+                    className="bg-[#111] border border-white/5 rounded-3xl p-5 shadow-lg active:scale-[0.98] transition-transform duration-200"
+                  >
+                    
+                    {/* Compact Header */}
+                    <div className="flex justify-between items-start mb-5">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-emerald-500/10 text-emerald-400 p-2.5 rounded-2xl">
+                          <Dumbbell size={20} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-white hype-font uppercase tracking-wide leading-none">
+                            {workout.splitType}
+                          </h3>
+                          <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1.5 font-medium">
+                            <Calendar size={12} /> 
+                            {new Date(workout.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      
+                      {/* Swipeable Large Delete Target */}
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleDelete(workout._id); }}
+                        className="p-3 text-gray-500 active:text-red-400 active:bg-red-500/10 rounded-full transition-colors flex items-center justify-center -mr-2 -mt-2"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                    
+                    {/* Compact Exercises Grid */}
+                    <div className="space-y-3">
+                      {workout.exercises.map((exercise, index) => (
+                        <div key={index} className="bg-black/40 rounded-2xl p-3 border border-white/5">
+                          <h4 className="font-bold text-sm text-emerald-50 mb-2 truncate">{exercise.name}</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {exercise.sets.map((set, setIndex) => (
+                              <div key={setIndex} className={`relative rounded-xl px-2.5 py-1.5 flex items-center gap-1.5 ${
+                                set.isPR 
+                                  ? 'bg-amber-500/15 border border-amber-500/30 text-amber-100' 
+                                  : 'bg-white/5 border border-white/5 text-gray-200'
+                              }`}>
+                                <span className="font-bold text-xs whitespace-nowrap">
+                                  {set.weight}<span className="text-gray-500 font-normal mx-0.5">×</span>{set.reps}
+                                </span>
+                                {set.isPR && <Trophy size={10} className="text-amber-500" />}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-                </div>
-              ))}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
-          </>
+          </motion.div>
         )}
       </main>
+
+      {/* Massive Floating Action Button (FAB) for thumbs */}
+      <motion.button
+        onClick={() => navigate('/log-workout')}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-24 right-5 z-50 w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-400 text-black rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(16,185,129,0.5)] active:shadow-none transition-shadow"
+      >
+        <Plus size={32} />
+      </motion.button>
+
+      {/* Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 bg-[#09090b]/90 backdrop-blur-2xl border-t border-white/10 pb-safe">
+        <div className="flex justify-around items-center px-2 py-3">
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="flex flex-col items-center p-2 text-emerald-400 w-16 active:scale-95 transition-transform"
+          >
+            <LayoutDashboard size={24} className="mb-1" />
+            <span className="text-[10px] uppercase font-bold tracking-widest">Dash</span>
+          </button>
+          
+          {/* Invisible placeholder for FAB spacing */}
+          <div className="w-16 h-12"></div>
+          
+          <button 
+            onClick={handleLogout}
+            className="flex flex-col items-center p-2 text-gray-500 active:text-red-400 w-16 active:scale-95 transition-transform"
+          >
+            <User size={24} className="mb-1" />
+            <span className="text-[10px] uppercase font-bold tracking-widest">Logout</span>
+          </button>
+        </div>
+      </nav>
+
     </div>
   );
 }
+
+// Inline linechart icon for the graph card since I forgot to import it at the top
+const LineChart = ({ className }) => (
+  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+);
 
 export default Dashboard;

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google'; // Import the Google Button
+import { GoogleLogin } from '@react-oauth/google';
+import { motion } from 'framer-motion';
+import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -9,7 +11,6 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // --- STANDARD EMAIL LOGIN ---
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -34,13 +35,11 @@ function Login() {
     }
   };
 
-  // --- NEW: GOOGLE LOGIN SUCCESS HANDLER ---
   const handleGoogleSuccess = async (credentialResponse) => {
     setIsLoading(true);
     setError('');
     
     try {
-      // Send the Google token to your Render backend
       const response = await fetch('https://omg-urave-gym.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,7 +49,6 @@ function Login() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Google login failed');
 
-      // Save YOUR custom token and go to dashboard
       localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
@@ -61,11 +59,33 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
-        <h2 className="text-3xl font-bold text-center text-emerald-400 mb-8 tracking-wide uppercase">Welcome Back</h2>
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden text-white font-sans">
+      {/* Background glow */}
+      <div className="absolute top-[20%] left-[-20%] w-[60%] h-[60%] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-600/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-sm bg-[#111]/80 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 sm:p-8 shadow-2xl relative z-10"
+      >
+        <button 
+          onClick={() => navigate('/')}
+          className="absolute top-5 left-5 text-gray-500 active:text-white transition-colors p-2 active:bg-white/5 rounded-full"
+        >
+          <ArrowLeft size={20} />
+        </button>
+
+        <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 mt-8 mb-6 hype-font tracking-widest uppercase">
+          Welcome Back
+        </h2>
         
-        {error && <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded mb-6 text-center">{error}</div>}
+        {error && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl mb-6 text-center text-sm font-medium">
+            {error}
+          </motion.div>
+        )}
 
         {/* --- GOOGLE BUTTON --- */}
         <div className="flex justify-center mb-6">
@@ -80,45 +100,60 @@ function Login() {
         </div>
 
         <div className="flex items-center my-6">
-          <div className="flex-1 border-t border-gray-700"></div>
-          <span className="px-4 text-gray-500 text-sm font-medium uppercase tracking-wider">Or email</span>
-          <div className="flex-1 border-t border-gray-700"></div>
+          <div className="flex-1 border-t border-white/5"></div>
+          <span className="px-4 text-gray-500 text-xs font-bold uppercase tracking-widest">Or email</span>
+          <div className="flex-1 border-t border-white/5"></div>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-gray-400 mb-2 text-sm font-medium">Email Address</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-black/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-              required
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-500">
+                <Mail size={18} />
+              </div>
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-black/60 border border-white/5 rounded-xl h-14 pl-12 pr-4 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-medium text-base"
+                placeholder="Email Address"
+                required
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-gray-400 mb-2 text-sm font-medium">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-black/50 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-              required
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-500">
+                <Lock size={18} />
+              </div>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-black/60 border border-white/5 rounded-xl h-14 pl-12 pr-4 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-medium text-base"
+                placeholder="Password"
+                required
+              />
+            </div>
           </div>
+          
           <button 
             type="submit" 
             disabled={isLoading}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3 rounded-lg transition-colors disabled:opacity-50 tracking-wide uppercase"
+            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-extrabold h-14 rounded-xl transition-transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest flex items-center justify-center gap-2 mt-4 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
-            {isLoading ? 'Logging in...' : 'Log In'}
+            <span>{isLoading ? 'Wait...' : 'Log In'}</span>
+            {!isLoading && <ArrowRight size={18} />}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400">
-          Don't have an account? <button onClick={() => navigate('/register')} className="text-emerald-400 hover:text-emerald-300 transition-colors">Sign up</button>
+        <p className="mt-8 text-center text-gray-400 text-sm font-medium">
+          No account?{' '}
+          <button onClick={() => navigate('/register')} className="text-emerald-400 font-bold active:text-emerald-300 transition-colors p-2 -m-2">
+            Sign up
+          </button>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }
